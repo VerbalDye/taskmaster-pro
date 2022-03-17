@@ -92,10 +92,17 @@ $(".list-group").on("click", "span", function () {
 
     $(this).replaceWith(dateInput);
 
+    dateInput.datepicker({
+        minDate: 1,
+        onClose: function() {
+            $(this).trigger("change");
+        }
+    });
+
     dateInput.trigger("focus");
 });
 
-$(".list-group").on("blur", "input[type='text']", function() {
+$(".list-group").on("change", "input[type='text']", function() {
 
     var date = $(this).val().trim();
 
@@ -159,6 +166,11 @@ $("#remove-tasks").on("click", function () {
         $("#list-" + key).empty();
     }
     saveTasks();
+});
+
+// adds the date picker to the modal
+$("#modalDueDate").datepicker({
+    minDate: 1
 });
 
 // load tasks for the first time
