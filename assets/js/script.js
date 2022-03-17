@@ -164,4 +164,68 @@ $("#remove-tasks").on("click", function () {
 // load tasks for the first time
 loadTasks();
 
+$(".card .list-group").sortable({
+    connectWith: $(".card .list-group"),
+    scroll: false,
+    tolerance: "pointer",
+    helper: "clone",
+    activate: function(event) {
+        // console.log("activate", this);
+    },
+    deactivate: function(event) {
+        // console.log("deactivate", this)
+    },
+    over: function(event) {
+        // console.log("over", this);
+    },
+    out: function(event) {
+        // console.log("out", this);
+    },
 
+    // listens for <li> to update position
+    update: function(event) {
+        // array to store new <ul> info
+        var tempArr = [];
+        
+        // runs through each of the children of the updated list
+        $(this).children().each(function() {
+            var text = $(this)
+                .find("p")
+                .text()
+                .trim();
+
+            var date = $(this)
+                .find("span")
+                .text()
+                .trim();
+
+            tempArr.push({
+                text: text,
+                date: date
+            });
+        });
+
+        // gets the correct list name
+        var arrName = $(this)
+            .attr("id")
+            .replace("list-", "")
+
+        // updates tasks and save it locally
+        tasks[arrName] = tempArr;
+        saveTasks();
+    }
+});
+
+$("#trash").droppable({
+    accept: ".card .list-group-item",
+    tolerance: "touch",
+    drop: function(event, ui) {
+        ui.draggable.remove();
+    },
+    over: function(event, ui) {
+        // console.log("over");
+    },
+    out: function(event, ui) {
+        // console.log("out");
+    }
+})
