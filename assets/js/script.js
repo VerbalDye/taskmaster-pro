@@ -47,9 +47,15 @@ var saveTasks = function () {
 
 // converts <p> element of description to text input so user can edit a task.
 $(".list-group").on("click", "p", function () {
+
+    // get the current text value
     var text = $(this).text().trim();
+
+    // creates the input element and replaces it
     var textInput = $("<textarea>").addClass("form-control").val(text);
     $(this).replaceWith(textInput);
+
+    // focuses the input so we can type immidiately 
     textInput.trigger("focus");
 });
 
@@ -82,42 +88,57 @@ $(".list-group").on("blur", "textarea", function () {
     $(this).replaceWith(taskP);
 });
 
+// handles clicking on the date of a created task
 $(".list-group").on("click", "span", function () {
+
+    // get the current date set
     var date = $(this).text().trim();
 
+    // creates the input
     var dateInput = $("<input>")
         .attr("type", "text")
         .addClass("form-control")
         .val(date);
 
+    // replaces the text box with the input field
     $(this).replaceWith(dateInput);
 
+    // creates the date picker popup
     dateInput.datepicker({
         minDate: 1,
+        // set the action of clicking off the picker to be considered a change event
+        // this is important to prevent errors on attempting to convert it back to a <span>
         onClose: function() {
             $(this).trigger("change");
         }
     });
 
+    // set the input to focus so we can type in it immidiately
     dateInput.trigger("focus");
 });
 
+// listens for the date picker to change or the user to click off after typing
 $(".list-group").on("change", "input[type='text']", function() {
 
+    // get the final value of the input
     var date = $(this).val().trim();
 
+    // get the list it belongs to
     var status = $(this)
         .closest(".list-group")
         .attr("id")
         .replace("list-", "");
 
+    // get the element's position in the list
     var index = $(this)
         .closest(".list-group-item")
         .index();
 
+    // set the tasks object to reflect the change adn save it to local storage
     tasks[status][index].date = date;
     saveTasks();
 
+    // creates and replaces the input with the <span>
     var taskSpan = $("<span>")
         .addClass("badge badge-primary badge-pill")
         .text(date);
@@ -176,6 +197,7 @@ $("#modalDueDate").datepicker({
 // load tasks for the first time
 loadTasks();
 
+// creates the drag and drop list functionality
 $(".card .list-group").sortable({
     connectWith: $(".card .list-group"),
     scroll: false,
@@ -228,6 +250,7 @@ $(".card .list-group").sortable({
     }
 });
 
+// makes the trash div at bottom a droppable location that will delete an element
 $("#trash").droppable({
     accept: ".card .list-group-item",
     tolerance: "touch",
